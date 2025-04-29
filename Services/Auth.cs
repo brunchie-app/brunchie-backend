@@ -1,6 +1,5 @@
 ﻿using brunchie_backend.DataBase;
 using brunchie_backend.Models;
-using brunchie_backend.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -8,48 +7,85 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace brunchie_backend.Controllers
+
+
+namespace brunchie_backend.Services
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class LoginController : ControllerBase
+    public class AuthService
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
-        
 
-        public LoginController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
-            
+
         }
 
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        public async Task<String> Authenticate( LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null) return Unauthorized("Invalid credentials.");
+            var user = await _userManager.FindByNameAsync(loginDto.UserName);
+            if (user == null) throw new KeyNotFoundException("Invalid userId");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-            if (!result.Succeeded) return Unauthorized("Invalid credentials.");
+            if (!result.Succeeded) throw new KeyNotFoundException("Invalid password.");
 
-            
+
             var token = GenerateJwtToken(user);
 
-            return Ok(new { token });
+            return token;
         }
 
+        public async Task<string> createUser(SignUpDto signupdto)
+        {
+            User user = new User
+            {
+                UserName = signupdto.UserName,
+                Email=signupdto.Email,
+                CreatedAt=DateTime.UtcNow,
+                CampusId=signupdto.CampusId,
+            };
+
+
+            try
+            {
+             var createResult = await _userManager.CreateAsync(user, signupdto.Password);
+            if (!createResult.Succeeded)
+             {
+                        
+              throw new Exception("User creation failed: " + string.Join(", ", createResult.Errors.Select(e => e.Description)));
+             }
+
+             var roleResult = await _userManager.AddToRoleAsync(user, signupdto.Role);
+             if (!roleResult.Succeeded)
+             {
+              throw new Exception("Role assignment failed: " + string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+             }
+
+                return "User Creation Successful";  
+            
+            }
+                catch (Exception ex)
+                {
+                    
+                    throw;
+                }
+            }
+
+
+
+        
         private string GenerateJwtToken(User user)
         {
             var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName)
+            
         };
 
             var roles = _userManager.GetRolesAsync(user).Result;
@@ -71,6 +107,6 @@ namespace brunchie_backend.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-    }
 
+    }
 }

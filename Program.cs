@@ -4,9 +4,11 @@ using MySql.Data.MySqlClient;
 using brunchie_backend.DataBase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using brunchie_backend.Repositories;
 
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using brunchie_backend.Services;
 
 
 
@@ -63,6 +65,10 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddTransient<AuthService>();
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 var app = builder.Build();
 
