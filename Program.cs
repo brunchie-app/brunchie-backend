@@ -69,6 +69,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<AuthService>();
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IMenuRepository,MenuRepository>();
 
 var app = builder.Build();
 

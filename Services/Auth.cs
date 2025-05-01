@@ -76,7 +76,26 @@ namespace brunchie_backend.Services
                 }
             }
 
+        public async Task<UserResponseDto> UserInfo (string UserId)
+        {
+            var user = await _userManager.FindByIdAsync(UserId);
 
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"No user found with Id {UserId}");
+            }
+
+            return new UserResponseDto
+            {
+                UserId = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt
+
+            };
+           
+                      
+        }
 
         
         private string GenerateJwtToken(User user)

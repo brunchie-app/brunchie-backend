@@ -22,11 +22,7 @@ namespace brunchie_backend.Controllers
         public async Task<IActionResult> Order([FromBody] OrderDto order)
 
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
+            
             try
             {
                 var OrderDetails = await orderRepository.PlaceOrder(order);

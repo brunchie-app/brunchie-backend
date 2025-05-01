@@ -46,10 +46,7 @@ namespace brunchie_backend.Controllers
         public async Task<IActionResult> SignUp([FromBody] SignUpDto signupdto)
 
         {
-            if (ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            
 
 
             try
@@ -63,6 +60,27 @@ namespace brunchie_backend.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("me")]
+        public async Task<IActionResult> GetInfo([FromQuery] string UserId)
+        {
+            if (string.IsNullOrEmpty(UserId))
+            {
+                return BadRequest("UserId empty");
+            }
+
+            try
+            {
+                var UserInfo = await _authService.UserInfo(UserId);
+                return Ok(UserInfo);
+            }
+
+            catch (KeyNotFoundException ex)
+            {
+
+                return NotFound(new {ex.Message});
             }
         }
 

@@ -23,7 +23,12 @@ namespace brunchie_backend.Repositories
 
     public interface IMenuRepository
     {
-        Task AddItems(IEnumerable<MenuItem> items);
+        Task AddItems(IEnumerable<MenuItemAddDto> items);
+        Task<IEnumerable<int>> RemoveItems(IEnumerable<int> items);
+
+        Task <IEnumerable<MenuItemRepDto>> GetMenu(string VendorId);
+
+       
        
     }
 }

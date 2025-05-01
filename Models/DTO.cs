@@ -82,7 +82,49 @@ namespace brunchie_backend.Models
         
     }
 
+    public class UserResponseDto
+    {
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
 
+        public string CampusId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class MenuItemAddDto
+    {
+        [Required] 
+        public string VendorId { get; set; } = null!;
+
+        [Required]
+        public string Name { get; set; } = null!;
+
+        [Required]
+        public string Description { get; set; } = null!;
+
+        [Required]
+        public decimal Price { get;  set; }
+
+        [Required]
+
+        public bool IsAvailable {  get; set; }
+
+        public string? ImageUrl { get; set; }
+    }
+
+    public class MenuItemRepDto
+    {
+        public string Name { get; set; } = null!;
+
+        public string Description { get; set; } = null!;
+
+        public decimal Price { get; set; }
+
+        public string? ImageUrl {  get; set; }
+        public bool IsAvailable { get; set; }
+    }
 }
 
 
