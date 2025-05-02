@@ -31,6 +31,22 @@ namespace brunchie_backend.Repositories
        
        
     }
+
+
+
+    public interface IFeedbackRepository
+
+    {
+        Task Post(FeedbackDto feedback);
+        Task <List<FeedbackDto>> Get(string VendorId);
+    }
+    
+    
+    
+    
+
+
+
 }
 
 

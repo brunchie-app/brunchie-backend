@@ -5,11 +5,11 @@ using brunchie_backend.DataBase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using brunchie_backend.Repositories;
-
+using AutoMapper;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using brunchie_backend.Services;
-
+using brunchie_backend.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -70,10 +70,22 @@ builder.Services.AddTransient<AuthService>();
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IMenuRepository,MenuRepository>();
+builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+
+var config = new MapperConfiguration(cfg =>
+{
+    cfg.CreateMap<Feedback, FeedbackDto>()
+       .ForAllMembers(options =>
+           options.Condition((source, destination, sourceMember) => sourceMember != null));
+    
+    
+});
+
+builder.Services.AddSingleton<IMapper>(config.CreateMapper());
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

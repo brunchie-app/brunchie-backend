@@ -125,6 +125,22 @@ namespace brunchie_backend.Models
         public string? ImageUrl {  get; set; }
         public bool IsAvailable { get; set; }
     }
+
+    public class FeedbackDto
+    {
+        public int FeedbackId {  get; set; }
+        public int OrderId { get; set; }
+        public int Rating { get; set; }
+        public string Comment {  get; set; }
+
+        public string VendorId { get; set; }
+
+    }
+        
+
+
+
+        
 }
 
 
